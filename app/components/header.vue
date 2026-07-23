@@ -1,16 +1,19 @@
 <script setup lang="ts">
-const user = {
-  name: "John Doe",
-  role: "Admin"
-}
-
-
-
+ import type {User} from "~/types/user"
+const {getUserByID} = useUsers()
 const route = useRoute()
+const {fetchCurrentUser} = useCurrentUser()
 
 const pageTitle = computed(() => {
   return (route.meta.title as string) || "Parking Management"
 })
+
+const user = ref <User | null>(null)
+
+onMounted(async () => {
+  fetchCurrentUser()
+})
+
 </script>
 
 <template>
@@ -52,11 +55,11 @@ const pageTitle = computed(() => {
 
           <div class="text-left">
             <p class="font-medium text-gray-900">
-              {{ user.name }}
+              {{ user?.name  ?? 'Unknown User'}}
             </p>
 
             <p class="text-xs text-gray-500">
-              {{ user.role }}
+              {{ user?.role }}
             </p>
           </div>
 

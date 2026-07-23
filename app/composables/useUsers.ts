@@ -21,7 +21,24 @@ export const useUsers = () => {
         return true
     }
 
+    const getUserByID = async (id: string) => {
+        const { data, error } = await useFetch<User>(
+            `/users/${id}`,
+            {
+                baseURL: config.public.apiBase,
+                method: "GET"
+            }
+        )
+        if (error.value) {
+            console.error(error.value)
+            return null
+        }
+ 
+        return data.value ?? null
+    }
+
     return {
-        createUser
+        createUser,
+        getUserByID
     }
 }

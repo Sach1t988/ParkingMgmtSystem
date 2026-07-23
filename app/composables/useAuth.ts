@@ -24,6 +24,7 @@ export const useAuth = () =>{
             }
             if(data.value?.data.accessToken  ){
                 localStorage.setItem("token", data.value.data.accessToken)
+                localStorage.setItem("userId", data.value.data.user.id)
                 return true
             }
             return false

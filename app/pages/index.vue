@@ -3,6 +3,8 @@ definePageMeta({
   middleware:"auth",
   title:"Dashboard"
 })
+
+const {user, fetchCurrentUser} = useCurrentUser()
 </script>
 
 

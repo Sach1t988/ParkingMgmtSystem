@@ -4,7 +4,7 @@ import  type { ToasterProps } from '@nuxt/ui';
 const toaster: ToasterProps = { position: 'top-right' }
 const colorMode = useColorMode()
 colorMode.preference = 'light'
-//colorMode.value = 'light'
+colorMode.value = 'light'
 </script>
 <template>
 <div>
