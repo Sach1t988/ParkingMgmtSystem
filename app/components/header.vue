@@ -3,38 +3,26 @@ const user = {
   name: "John Doe",
   role: "Admin"
 }
+
+
+
+const route = useRoute()
+
+const pageTitle = computed(() => {
+  return (route.meta.title as string) || "Parking Management"
+})
 </script>
 
 <template>
-  <header class="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm"> 
-     <!-- <header
-    class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8"
-  > -->
+  <header class="sticky top-0 z-50 bg-white"> 
     <div class="h-16 px-8 flex items-center justify-between">
 
       <!-- Logo -->
-      <div class="flex items-center gap-3">
-
-        <div
-          class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center"
-        >
-          <UIcon
-            name="i-lucide-square-parking"
-            class="text-white w-5 h-5"
-          />
-        </div>
-
-        <div>
-          <h1 class="font-semibold text-gray-900">
-            Parking Management
-          </h1>
-
-          <p class="text-xs text-gray-500">
-            Administration Panel
-          </p>
-        </div>
-
-      </div>
+      <div class="flex flex-col">
+  <h1 class="text-2xl font-semibold text-gray-900">
+    {{ pageTitle }}
+  </h1>
+</div>
 
       <!-- Profile -->
       <UDropdownMenu
@@ -42,11 +30,12 @@ const user = {
           [
             {
               label: 'Profile',
-              icon: 'i-lucide-user'
+              icon: 'i-lucide-user',
+              to:'/profile'
             },
             {
               label: 'Logout',
-              icon: 'i-lucide-log-out'
+              icon: 'i-lucide-log-out'  
             }
           ]
         ]"
