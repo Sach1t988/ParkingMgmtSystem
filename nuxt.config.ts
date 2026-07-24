@@ -5,7 +5,8 @@ export default defineNuxtConfig({
   modules: ['@nuxt/ui'],
   runtimeConfig: {
     public: {
-      apiBase: ''
+      // Override with NUXT_PUBLIC_API_BASE in .env or the deployment environment.
+      apiBase: process.env.NUXT_PUBLIC_API_BASE || ''
     }
   },
   devServer: {
