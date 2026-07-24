@@ -1,14 +1,14 @@
 <script setup lang="ts">
- import type {User} from "~/types/user"
-const {getUserByID} = useUsers()
+//  import type {User} from "~/types/user"
+// const {getUserByID} = useUsers()
 const route = useRoute()
-const {fetchCurrentUser} = useCurrentUser()
+const {user, fetchCurrentUser} = useCurrentUser()
 
 const pageTitle = computed(() => {
   return (route.meta.title as string) || "Parking Management"
 })
 
-const user = ref <User | null>(null)
+// const user = ref <User | null>(null)
 
 onMounted(async () => {
   fetchCurrentUser()
@@ -60,7 +60,7 @@ onMounted(async () => {
 
             <p class="text-xs text-gray-500">
               {{ user?.role }}
-            </p>
+            </p>  
           </div>
 
           <UIcon

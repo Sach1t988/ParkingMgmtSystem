@@ -1,7 +1,4 @@
-export default defineNuxtRouteMiddleware(()=>{
-    if(import.meta.server)  return 
-    const token = localStorage.getItem("token")
-    if(token == null){
-        return navigateTo("/login")
-    }
+export default defineNuxtRouteMiddleware((to) => {
+  if (!to.path.startsWith('/dashboard')) return
+  if (!useCookie<string | null>('parking_session').value) return navigateTo('/login')
 })
