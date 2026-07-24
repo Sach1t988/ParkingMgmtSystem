@@ -11,20 +11,20 @@ export const useUsers = () => {
 
  
 const createUser = async (user: CreateUserRequest) => {
-    const { data, error } = await useFetch("/users", {
+  try {
+    const response = await $fetch("/users", {
       baseURL: config.public.apiBase,
       method: "POST",
       headers: authHeaders(),
       body: user,
     });
 
-    if (error.value) {
-      console.error(error.value);
-      return false;
-    }
-
-    return true;
-  };
+    return response;
+  } catch (error) {
+    console.error("Failed to create user:", error);
+    return null;
+  }
+};
 
   const getUsers = async (
     isActive?: boolean,

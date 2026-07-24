@@ -34,7 +34,10 @@ const toast = useToast();
 import type { Role } from "~/types/roles";
 const roles = ref<Role[]>([]);
 const roleOptions = computed(() =>
-  roles.value.map(role => role.name)
+  roles.value.map((role) => ({
+    label: role.name,
+    value: role._id,
+  }))
 );
 
 const fetchRoles = async () => {
@@ -74,8 +77,13 @@ async function handleAddUser() {
 
   if (success) {
     await fetchUsers();
+    console.log(form);
     isAddModalOpen.value = false;
     resetForm();
+    toast.add({
+      title: "User created successfully",
+      color: "success",
+    });
   } else {
     toast.add({
       title: "Failed to add user",
@@ -282,6 +290,8 @@ async function handleAddUser() {
             <USelectMenu
               v-model="form.role"
               :items="roleOptions"
+              label-key="label"
+              value-key="value"
               placeholder="Select a role"
               size="xl"
               icon="i-lucide-shield"

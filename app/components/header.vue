@@ -3,9 +3,41 @@
 // const {getUserByID} = useUsers()
 const route = useRoute();
 const { user, fetchCurrentUser } = useCurrentUser();
+const router = useRouter();
 
 const pageTitle = computed(() => {
   return (route.meta.title as string) || "Parking Management";
+});
+
+const logout = () => {
+  console.log("logout clickied");
+  localStorage.removeItem("token");
+  router.push("/login");
+};
+
+const menuItems = [
+  [
+    {
+      label: "Profile",
+      icon: "i-lucide-user",
+      to: "/profile",
+    },
+    {
+      label: "Logout",
+      icon: "i-lucide-log-out",
+      onSelect: logout,
+    },
+  ],
+];
+
+const userInitials = computed(() => {
+  if (!user.value?.name) return "?";
+
+  return user.value.name
+    .trim()
+    .split(/\s+/)
+    .map((name) => name.charAt(0).toUpperCase())
+    .join("");
 });
 
 onMounted(async () => {
@@ -24,25 +56,11 @@ onMounted(async () => {
       </div>
 
       <!-- Profile -->
-      <UDropdownMenu
-        :items="[
-          [
-            {
-              label: 'Profile',
-              icon: 'i-lucide-user',
-              to: '/profile',
-            },
-            {
-              label: 'Logout',
-              icon: 'i-lucide-log-out',
-            },
-          ],
-        ]"
-      >
+      <UDropdownMenu :items="menuItems">
         <button
           class="flex items-center gap-3 rounded-xl px-3 py-2 hover:bg-gray-100 transition"
         >
-          <UAvatar src="https://i.pravatar.cc/100" alt="John Doe" />
+          <UAvatar :text="userInitials" />
 
           <div class="text-left">
             <p class="font-medium text-gray-900">
