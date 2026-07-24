@@ -1,4 +1,4 @@
-import type { User } from "~/types/user";
+import type { User, UserResponse } from "~/types/user";
 
 export const useUsers = () => {
   const config = useRuntimeConfig();
@@ -22,6 +22,28 @@ export const useUsers = () => {
     }
 
     return true;
+  };
+
+  const getUsers = async (
+    isActive?: boolean,
+    phoneNumber?: string
+  ): Promise<User[]> => {
+    try {
+      const response = await $fetch<UserResponse>("/users", {
+        baseURL: config.public.apiBase,
+        method: "GET",
+        headers: authHeaders(),
+        query: {
+          ...(isActive !== undefined && { isActive }),
+          ...(phoneNumber && { phoneNumber }),
+        },
+      })
+
+      return response.data
+    } catch (error) {
+      console.error("Failed to fetch users:", error)
+      return []
+    }
   };
 
   //   const getUserByID = async (id: string) => {
@@ -62,5 +84,6 @@ export const useUsers = () => {
   return {
     createUser,
     getUserByID,
+    getUsers
   };
 };

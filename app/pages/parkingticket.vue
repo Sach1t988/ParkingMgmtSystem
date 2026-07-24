@@ -31,9 +31,27 @@ onMounted(async () => {
 
 <template>
   <div class="flex flex-col gap-6">
-    <div class="flex justify-between items-center">
+    <!-- <div class="flex justify-between items-center">
       <h2 class="text-2xl font-semibold">Reports</h2>
-    </div>
+    </div> -->
+    <!-- Toolbar -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div class="flex flex-col sm:flex-row gap-3 flex-1">
+        <UInput
+          icon="i-lucide-search"
+          placeholder="Search Ticket"
+          size="lg"
+          class="w-full sm:w-64"
+        />
+        <!-- <USelectMenu
+          :items="['All Status', 'Active', 'Inactive']"
+          default-value="All Status"
+          size="lg"
+          class="w-full sm:w-40"
+        /> -->
+        
+      </div>
+      </div>
 
     <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
       <table class="w-full text-sm">
@@ -101,4 +119,3 @@ onMounted(async () => {
     </div>
   </div>
 </template>
-

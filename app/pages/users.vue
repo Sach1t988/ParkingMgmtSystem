@@ -1,64 +1,75 @@
 <script setup lang="ts">
-import type { User } from "~/types/user"
+import type { User } from "~/types/user";
+const { getUsers } = useUsers();
+
+onMounted(async () => {
+  users.value = await getUsers();
+  console.log(users.value);
+});
 
 definePageMeta({
   middleware: "auth",
-  title:"Users"
-})
+  title: "Users",
+});
 
-const { createUser } = useUsers()
-const toast = useToast()        
+const { createUser } = useUsers();
+const toast = useToast();
 
-const roleOptions = ["Admin", "Manager", "Operator", "Staff"]
+const roleOptions = ["Admin", "Manager", "Operator", "Staff"];
 
 // mock rows for now — swap for a real GET /users call once that endpoint exists
-const users = ref<User[]>([
-  { name: "Parking System", phoneNumber: "12345678", password: "", role: "Admin", isActive: true },
-  { name: "Dev Team", phoneNumber: "9876543210", password: "", role: "Manager", isActive: true },
-  { name: "test2", phoneNumber: "987654", password: "", role: "Staff", isActive: false }
-])
+// const users = ref<User[]>([
+//   { name: "Parking System", phoneNumber: "12345678", password: "", role: "Admin", isActive: true },
+//   { name: "Dev Team", phoneNumber: "9876543210", password: "", role: "Manager", isActive: true },
+//   { name: "test2", phoneNumber: "987654", password: "", role: "Staff", isActive: false }
+// ])
+const users = ref<User[]>([]);
 
-const isAddModalOpen = ref(false)
-const showPassword = ref(false)
+const isAddModalOpen = ref(false);
+const showPassword = ref(false);
 
 const form = reactive<User>({
   name: "",
   phoneNumber: "",
   password: "",
   role: "",
-  isActive: true
-})
+  isActive: true,
+});
 
 function resetForm() {
-  form.name = ""
-  form.phoneNumber = ""
-  form.password = ""
-  form.role = ""
-  form.isActive = true
+  form.name = "";
+  form.phoneNumber = "";
+  form.password = "";
+  form.role = "";
+  form.isActive = true;
 }
 
 async function handleAddUser() {
-  const success = await createUser(form)
+  const success = await createUser(form);
 
   if (success) {
-    users.value.unshift({ ...form })
-    isAddModalOpen.value = false
-    resetForm()
+    users.value.unshift({ ...form });
+    isAddModalOpen.value = false;
+    resetForm();
   } else {
     toast.add({
       title: "Failed to add user",
       description: "Something went wrong. Please try again.",
-      color: "error"
-    })
+      color: "error",
+    });
   }
 }
 </script>
+
+<!-- <template>
+  <pre>{{ users }}</pre>
+</template> -->
 
 <template>
   <div class="flex flex-col gap-6">
   
 
-    <!-- Toolbar -->
+    
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
       <div class="flex flex-col sm:flex-row gap-3 flex-1">
         <UInput
@@ -76,15 +87,7 @@ async function handleAddUser() {
       </div>
 
       <div class="flex gap-3">
-        <!-- <UButton
-          icon="i-lucide-download"
-          color="neutral"
-          variant="outline"
-          size="lg"
-          class="rounded-xl"
-        >
-          Export
-        </UButton> -->
+        
         <UButton
           icon="i-lucide-plus"
           color="primary"
@@ -97,7 +100,7 @@ async function handleAddUser() {
       </div>
     </div>
 
-    <!-- Table -->
+    
     <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
       <table class="w-full text-sm">
         <thead class="bg-gray-50 text-gray-500 text-xs uppercase tracking-wide">
@@ -143,7 +146,7 @@ async function handleAddUser() {
 </td>
 
 <td class="px-4 py-4 text-gray-700">
-  {{ user.role }}
+  {{ user.role.name }}
 </td>
 
 <td class="px-4 py-4">
@@ -157,7 +160,7 @@ async function handleAddUser() {
         </tbody>
       </table>
 
-      <!-- Pagination (static for now) -->
+      
       <div class="flex items-center justify-between px-6 py-4 border-t border-gray-100 text-sm text-gray-400">
         <span>Show 10 from {{ users.length }} data</span>
         <div class="flex items-center gap-1">
@@ -168,7 +171,7 @@ async function handleAddUser() {
       </div>
     </div>
 
-    <!-- Add User modal -->
+  
     <UModal v-model:open="isAddModalOpen" title="Add User">
       <template #body>
         <div class="flex flex-col gap-5">

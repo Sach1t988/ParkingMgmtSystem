@@ -7,7 +7,7 @@
 //     isActive: boolean
 // }
 
-interface Role {
+export interface Role {
   _id: string;
   name: string;
   permissions: string[];
@@ -18,4 +18,9 @@ export interface User {
   name: string;
   phoneNumber: string;
   role: Role;
+}
+
+export interface UserResponse {
+    success: boolean
+    data: User[]
 }
