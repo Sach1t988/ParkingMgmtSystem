@@ -1,17 +1,4 @@
-// export interface User {
-//     id?: string
-//     name: string
-//     phoneNumber: string
-//     password: string
-//     role: string
-//     isActive: boolean
-// }
-
-export interface Role {
-  _id: string;
-  name: string;
-  permissions: string[];
-}
+import type { Role } from "~/types/roles";
 
 export interface User {
   _id: string;
@@ -23,4 +10,12 @@ export interface User {
 export interface UserResponse {
     success: boolean
     data: User[]
+}
+
+export interface CreateUserRequest {
+  name: string;
+  phoneNumber: string;
+  password: string;
+  role: string;
+  isActive: boolean;
 }

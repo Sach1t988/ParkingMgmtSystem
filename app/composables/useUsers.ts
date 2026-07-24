@@ -1,4 +1,5 @@
 import type { User, UserResponse } from "~/types/user";
+import type { CreateUserRequest } from "~/types/user";
 
 export const useUsers = () => {
   const config = useRuntimeConfig();
@@ -8,7 +9,8 @@ export const useUsers = () => {
     return token ? { Authorization: `Bearer ${token}` } : {};
   };
 
-  const createUser = async (user: User) => {
+ 
+const createUser = async (user: CreateUserRequest) => {
     const { data, error } = await useFetch("/users", {
       baseURL: config.public.apiBase,
       method: "POST",

@@ -1,11 +1,26 @@
 <script setup lang="ts">
 import type { User } from "~/types/user";
 const { getUsers } = useUsers();
+const { getRoles } = useRoles();
 
-onMounted(async () => {
-  users.value = await getUsers();
+
+const fetchUsers = async () => {
+  let isActive: boolean | undefined;
+
+  if (selectedStatus.value === "Active") {
+    isActive = true;
+  } else if (selectedStatus.value === "Inactive") {
+    isActive = false;
+  }
+
+  users.value = await getUsers(isActive);
+
   console.log(users.value);
-});
+};
+
+
+
+onMounted(fetchUsers);
 
 definePageMeta({
   middleware: "auth",
@@ -15,20 +30,30 @@ definePageMeta({
 const { createUser } = useUsers();
 const toast = useToast();
 
-const roleOptions = ["Admin", "Manager", "Operator", "Staff"];
 
-// mock rows for now — swap for a real GET /users call once that endpoint exists
-// const users = ref<User[]>([
-//   { name: "Parking System", phoneNumber: "12345678", password: "", role: "Admin", isActive: true },
-//   { name: "Dev Team", phoneNumber: "9876543210", password: "", role: "Manager", isActive: true },
-//   { name: "test2", phoneNumber: "987654", password: "", role: "Staff", isActive: false }
-// ])
+import type { Role } from "~/types/roles";
+const roles = ref<Role[]>([]);
+const roleOptions = computed(() =>
+  roles.value.map(role => role.name)
+);
+
+const fetchRoles = async () => {
+  roles.value = await getRoles();
+};
+
+onMounted(async () => {
+  await fetchUsers();
+  await fetchRoles();
+});
 const users = ref<User[]>([]);
+const selectedStatus = ref("All Status");
 
 const isAddModalOpen = ref(false);
 const showPassword = ref(false);
 
-const form = reactive<User>({
+import type { CreateUserRequest } from "~/types/user";
+
+const form = reactive<CreateUserRequest>({
   name: "",
   phoneNumber: "",
   password: "",
@@ -48,7 +73,7 @@ async function handleAddUser() {
   const success = await createUser(form);
 
   if (success) {
-    users.value.unshift({ ...form });
+    await fetchUsers();
     isAddModalOpen.value = false;
     resetForm();
   } else {
@@ -67,27 +92,25 @@ async function handleAddUser() {
 
 <template>
   <div class="flex flex-col gap-6">
-  
-
-    
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    <div
+      class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+    >
       <div class="flex flex-col sm:flex-row gap-3 flex-1">
         <UInput
           icon="i-lucide-search"
-          placeholder="Search Username"
+          placeholder="Search PhoneNumber"
           size="lg"
           class="w-full sm:w-64"
         />
         <USelectMenu
           :items="['All Status', 'Active', 'Inactive']"
-          default-value="All Status"
           size="lg"
           class="w-full sm:w-40"
+          @update:model-value="fetchUsers"
         />
       </div>
 
       <div class="flex gap-3">
-        
         <UButton
           icon="i-lucide-plus"
           color="primary"
@@ -100,14 +123,11 @@ async function handleAddUser() {
       </div>
     </div>
 
-    
     <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
       <table class="w-full text-sm">
         <thead class="bg-gray-50 text-gray-500 text-xs uppercase tracking-wide">
           <tr>
-            <th class="w-16 px-6 py-3 text-left">
-              S.N.
-            </th>
+            <th class="w-16 px-6 py-3 text-left">S.N.</th>
             <th class="px-4 py-3 text-left">Full Name</th>
             <th class="px-4 py-3 text-left">Phone Number</th>
             <th class="px-4 py-3 text-left">Status</th>
@@ -117,65 +137,95 @@ async function handleAddUser() {
         </thead>
         <tbody class="divide-y divide-gray-100">
           <tr
-  v-for="(user, index) in users"
-  :key="user.phoneNumber"
-  class="hover:bg-blue-50/40 transition-colors"
->
+            v-for="(user, index) in users"
+            :key="user.phoneNumber"
+            class="hover:bg-blue-50/40 transition-colors"
+          >
             <td class="px-6 py-4 text-grey-500">
-              {{index+1}}
+              {{ index + 1 }}
             </td>
             <td class="px-4 py-4 font-medium text-gray-900">
-  {{ user.name }}
-</td>
+              {{ user.name }}
+            </td>
 
-<td class="px-4 py-4 text-gray-500">
-  {{ user.phoneNumber }}
-</td>
+            <td class="px-4 py-4 text-gray-500">
+              {{ user.phoneNumber }}
+            </td>
 
-<td class="px-4 py-4">
-  <span
-    class="inline-flex items-center gap-1.5 text-sm font-medium"
-    :class="user.isActive ? 'text-emerald-600' : 'text-red-500'"
-  >
-    <span
-      class="w-1.5 h-1.5 rounded-full"
-      :class="user.isActive ? 'bg-emerald-500' : 'bg-red-500'"
-    />
-    {{ user.isActive ? "Active" : "Inactive" }}
-  </span>
-</td>
+            <td class="px-4 py-4">
+              <span
+                class="inline-flex items-center gap-1.5 text-sm font-medium"
+                :class="user.isActive ? 'text-emerald-600' : 'text-red-500'"
+              >
+                <span
+                  class="w-1.5 h-1.5 rounded-full"
+                  :class="user.isActive ? 'bg-emerald-500' : 'bg-red-500'"
+                />
+                {{ user.isActive ? "Active" : "Inactive" }}
+              </span>
+            </td>
 
-<td class="px-4 py-4 text-gray-700">
-  {{ user.role.name }}
-</td>
+            <td class="px-4 py-4 text-gray-700">
+              {{ user.role.name }}
+            </td>
 
-<td class="px-4 py-4">
-  <div class="flex items-center justify-end gap-1 text-gray-400">
-    <UButton icon="i-lucide-eye" color="neutral" variant="ghost" size="sm" />
-    <UButton icon="i-lucide-pencil" color="neutral" variant="ghost" size="sm" />
-    <UButton icon="i-lucide-trash-2" color="neutral" variant="ghost" size="sm" />
-  </div>
-</td>
+            <td class="px-4 py-4">
+              <div class="flex items-center justify-end gap-1 text-gray-400">
+                <UButton
+                  icon="i-lucide-eye"
+                  color="neutral"
+                  variant="ghost"
+                  size="sm"
+                />
+                <UButton
+                  icon="i-lucide-pencil"
+                  color="neutral"
+                  variant="ghost"
+                  size="sm"
+                />
+                <UButton
+                  icon="i-lucide-trash-2"
+                  color="neutral"
+                  variant="ghost"
+                  size="sm"
+                />
+              </div>
+            </td>
           </tr>
         </tbody>
       </table>
 
-      
-      <div class="flex items-center justify-between px-6 py-4 border-t border-gray-100 text-sm text-gray-400">
+      <div
+        class="flex items-center justify-between px-6 py-4 border-t border-gray-100 text-sm text-gray-400"
+      >
         <span>Show 10 from {{ users.length }} data</span>
         <div class="flex items-center gap-1">
-          <UButton label="Previous" color="neutral" variant="outline" size="sm" disabled />
+          <UButton
+            label="Previous"
+            color="neutral"
+            variant="outline"
+            size="sm"
+            disabled
+          />
           <UButton label="1" color="primary" variant="soft" size="sm" />
-          <UButton label="Next" color="neutral" variant="outline" size="sm" disabled />
+          <UButton
+            label="Next"
+            color="neutral"
+            variant="outline"
+            size="sm"
+            disabled
+          />
         </div>
       </div>
     </div>
 
-  
     <UModal v-model:open="isAddModalOpen" title="Add User">
       <template #body>
         <div class="flex flex-col gap-5">
-          <UFormField label="Name" :ui="{ label: 'text-gray-700 font-medium mb-2 text-sm' }">
+          <UFormField
+            label="Name"
+            :ui="{ label: 'text-gray-700 font-medium mb-2 text-sm' }"
+          >
             <UInput
               v-model="form.name"
               placeholder="Full name"
@@ -185,7 +235,10 @@ async function handleAddUser() {
             />
           </UFormField>
 
-          <UFormField label="Phone Number" :ui="{ label: 'text-gray-700 font-medium mb-2 text-sm' }">
+          <UFormField
+            label="Phone Number"
+            :ui="{ label: 'text-gray-700 font-medium mb-2 text-sm' }"
+          >
             <UInput
               v-model="form.phoneNumber"
               type="tel"
@@ -196,7 +249,10 @@ async function handleAddUser() {
             />
           </UFormField>
 
-          <UFormField label="Password" :ui="{ label: 'text-gray-700 font-medium mb-2 text-sm' }">
+          <UFormField
+            label="Password"
+            :ui="{ label: 'text-gray-700 font-medium mb-2 text-sm' }"
+          >
             <UInput
               v-model="form.password"
               :type="showPassword ? 'text' : 'password'"
@@ -219,7 +275,10 @@ async function handleAddUser() {
             </UInput>
           </UFormField>
 
-          <UFormField label="Role" :ui="{ label: 'text-gray-700 font-medium mb-2 text-sm' }">
+          <UFormField
+            label="Role"
+            :ui="{ label: 'text-gray-700 font-medium mb-2 text-sm' }"
+          >
             <USelectMenu
               v-model="form.role"
               :items="roleOptions"
