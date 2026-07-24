@@ -1,22 +1,18 @@
 <script setup lang="ts">
 definePageMeta({
-  middleware:"auth",
-  title:"Dashboard"
-})
+  middleware: "auth",
+  title: "Dashboard",
+});
 
-const {user, fetchCurrentUser} = useCurrentUser()
+const { user, fetchCurrentUser } = useCurrentUser();
+onMounted(() => {
+  fetchCurrentUser();
+});
 </script>
 
-
 <template>
-    <div>
-        <h1>this is the index page</h1>
-        <NuxtLink to="/users">
-            Users
-        </NuxtLink>
-    </div>
+  <div>
+    <h1>Welcome, {{ user?.name ?? "Loading..." }}</h1>
+    <NuxtLink to="/users"> Users </NuxtLink>
+  </div>
 </template>
-
-
-
-
