@@ -1,12 +1,16 @@
 export interface LoginResponse {
-  success: boolean
+  success?: boolean
+  message?: string
   data: {
-    accessToken: string
-    user: {
+    accessToken?: string
+    token?: string
+    id?: string
+    userId?: string
+    user?: {
       id: string
-      name: string
-      phoneNumber: string
-      role: string
+      name?: string
+      phoneNumber?: string
+      role?: string
     }
   }
 }

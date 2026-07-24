@@ -2,14 +2,19 @@
 <script setup lang="ts">
 import { z } from "zod"
 import type { FormSubmitEvent } from "@nuxt/ui"
+import { useAuthStore } from "~/store/auth"
 
 definePageMeta({
   layout: "login",
   middleware:"guest"  
 })
 
+const authStore = useAuthStore();
+
 const { login } = useAuth()
 const toast = useToast()
+
+const router = useRouter();
 
 function showToast() {
   toast.add({
@@ -43,19 +48,16 @@ const state = reactive({
 const showPassword = ref(false)
 
 const handleLogin = async (event: FormSubmitEvent<Schema>) => {
+  event.preventDefault();
   console.log("Login button clicked")
 
-  const success = await login(
-    event.data.phoneNumber,
-    event.data.password
-  )
+  const payload = {
+    phoneNumber: event.data.phoneNumber,
+    password: event.data.password,
+  };
 
-  if (success) {
-    await navigateTo("/")
-  } else {
-    showToast()
-    console.log("Invalid credentials")
-  }
+  await authStore.login(payload);
+  router.push('/');
 }
 </script>
 

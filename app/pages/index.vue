@@ -5,18 +5,18 @@ definePageMeta({
 })
 
 const {user, fetchCurrentUser} = useCurrentUser()
+
+onMounted(() => {
+  fetchCurrentUser()
+})
 </script>
 
 
 <template>
     <div>
-        <h1>this is the index page</h1>
+        <h1>Welcome, {{ user?.name ?? 'Loading…' }}</h1>
         <NuxtLink to="/users">
             Users
         </NuxtLink>
     </div>
 </template>
-
-
-
-

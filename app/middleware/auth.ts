@@ -1,7 +1,12 @@
-export default defineNuxtRouteMiddleware(()=>{
-    if(import.meta.server)  return 
-    const token = localStorage.getItem("token")
-    if(token == null){
-        return navigateTo("/login")
-    }
-})
+export default defineNuxtRouteMiddleware(() => {
+  if (import.meta.server) return;
+  const route = useRoute();
+  const token = localStorage.getItem("authorization");
+  if (token == null && route.name !== "login") {
+    return navigateTo("/login");
+  }
+
+  if (token && route.name === "login") {
+    return navigateTo("/");
+  }
+});
