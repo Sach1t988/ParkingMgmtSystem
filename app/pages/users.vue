@@ -56,16 +56,7 @@ async function handleAddUser() {
 
 <template>
   <div class="flex flex-col gap-6">
-    <!-- Breadcrumb -->
-    <!-- <nav class="flex items-center gap-2 text-sm text-gray-400">
-      <NuxtLink to="/" class="hover:text-blue-600">
-        <UIcon name="i-lucide-home" class="w-4 h-4" />
-      </NuxtLink>
-      <span>/</span>
-      <span class="text-blue-600 font-medium">User</span>
-    </nav> -->
-
-    <!-- <h1 class="text-3xl font-semibold text-gray-900">Users</h1> -->
+  
 
     <!-- Toolbar -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
